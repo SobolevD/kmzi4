@@ -1,15 +1,16 @@
 package org.example.utils;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class PermutationHelper {
 
-    public static List<Long> makePermutation(List<Long> inputSequence) {
+    public static List<BigInteger> makePermutation(List<BigInteger> inputSequence) {
 
-        List<Long> resultSequence = new ArrayList<>(inputSequence);
-        Collections.fill(resultSequence, 0L);
+        List<BigInteger> resultSequence = new ArrayList<>(inputSequence);
+        Collections.fill(resultSequence, BigInteger.ZERO);
 
         List<Integer> availablePositions = new ArrayList<>();
 
@@ -17,10 +18,10 @@ public class PermutationHelper {
             availablePositions.add(i);
         }
 
-        for (Long aLong : inputSequence) {
-            int index = MathHelper.randomIntInRange(0, availablePositions.size());
-            int randomPosition = availablePositions.get(index);
-            availablePositions.remove(index);
+        for (BigInteger aLong : inputSequence) {
+            BigInteger index = MathHelper.nextRandomBigInteger(BigInteger.valueOf(availablePositions.size()));
+            int randomPosition = availablePositions.get(index.intValue());
+            availablePositions.remove(index.intValue());
             resultSequence.set(randomPosition, aLong);
         }
 

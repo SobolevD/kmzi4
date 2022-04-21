@@ -5,44 +5,48 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static java.math.BigInteger.ONE;
+import static java.math.BigInteger.ZERO;
+
 public class MathHelper {
 
     private static final Random RANDOM = new Random();
 
-    public static long randomLongInRange(long leftBorder, long rightBorder) {
-        return Math.abs(RANDOM.nextLong(rightBorder - leftBorder)) + leftBorder;
+    public static BigInteger randomLongInRange(BigInteger leftBorder, BigInteger rightBorder) {
+        return nextRandomBigInteger(rightBorder).add(ONE).add(leftBorder);
     }
 
-    public static int randomIntInRange(int leftBorder, int rightBorder) {
-
-        if (leftBorder == rightBorder)
-            return leftBorder;
-
-        return Math.abs(RANDOM.nextInt(rightBorder-leftBorder)) + leftBorder;
-    }
-
-    public static long gcd(long a, long b) {
-        BigInteger aB = BigInteger.valueOf(a);
-        BigInteger bB = BigInteger.valueOf(b);
-        BigInteger gcd = aB.gcd(bB);
-        return gcd.longValue();
-    }
-
-    public static long getSequenceSum(List<Long> sequence) {
-        long result = 0;
-        for (Long elem : sequence) {
-            result += elem;
+    public static BigInteger getSequenceSum(List<BigInteger> sequence) {
+        BigInteger result = ZERO;
+        for (BigInteger elem : sequence) {
+            result = result.add(elem);
         }
         return result;
     }
 
-    public static List<Long> generateSortedSequence(long n) {
-        List<Long> sortedSequence = new ArrayList<>();
+    public static List<BigInteger> generateSortedSequence(BigInteger n) {
+        List<BigInteger> sortedSequence = new ArrayList<>();
 
-        for (long i = 0; i < n; ++i) {
+        for (BigInteger i = ZERO; MathHelper.isLess(i, n); i = i.add(ONE)) {
             sortedSequence.add(i);
         }
 
         return sortedSequence;
+    }
+
+    public static boolean isBigger(BigInteger first, BigInteger second) {
+        return !first.divide(second).equals(ZERO) && !first.equals(second);
+    }
+
+    public static boolean isLess(BigInteger first, BigInteger second) {
+        return !isBigger(first, second);
+    }
+
+    public static BigInteger nextRandomBigInteger(BigInteger upperLimit) {
+        BigInteger randomNumber;
+        do {
+            randomNumber = new BigInteger(upperLimit.bitLength(), RANDOM);
+        } while (randomNumber.compareTo(upperLimit) >= 0);
+        return randomNumber;
     }
 }

@@ -3,27 +3,31 @@ package org.example.key_generator;
 import org.example.utils.MathHelper;
 import org.example.utils.PermutationHelper;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import static java.math.BigInteger.ONE;
+import static java.math.BigInteger.ZERO;
 
 public class KeyGenerator {
 
 
     private static final long MAX_SEQUENCE_DELAY = 20;
     private static final Random RANDOM = new Random();
-    private final long M;
-    private final long W;
-    private final List<Long> SEQUENCE;
-    private final List<Long> MIXED_ARRAY;
+    private final BigInteger M;
+    private final BigInteger W;
+    private final List<BigInteger> SEQUENCE;
+    private final List<BigInteger> MIXED_ARRAY;
 
-    public KeyGenerator(int n) {
-        List<Long> sequence = generateRandomSequence(n);
-        long currentDelay = Math.abs(RANDOM.nextLong()) % MAX_SEQUENCE_DELAY;
-        long M = MathHelper.getSequenceSum(sequence) + currentDelay;
-        long W = generateRandomW(M);
+    public KeyGenerator(BigInteger n) {
+        List<BigInteger> sequence = generateRandomSequence(n);
+        BigInteger currentDelay = BigInteger.valueOf(Math.abs(RANDOM.nextLong()) % MAX_SEQUENCE_DELAY);
+        BigInteger M = MathHelper.getSequenceSum(sequence).add(currentDelay);
+        BigInteger W = generateRandomW(M);
 
-        List<Long> mixedArray = PermutationHelper.makePermutation(MathHelper.generateSortedSequence(n));
+        List<BigInteger> mixedArray = PermutationHelper.makePermutation(MathHelper.generateSortedSequence(n));
 
         this.M = M;
         this.W = W;
@@ -33,46 +37,47 @@ public class KeyGenerator {
         System.out.printf("Sequence: %s, M = %d, W = %d, Mixed sequence: %s\n", sequence, M, W, mixedArray);
     }
 
-    private List<Long> generateRandomSequence(int n) {
-        List<Long> resultSequence = new ArrayList<>();
+    private List<BigInteger> generateRandomSequence(BigInteger n) {
+        List<BigInteger> resultSequence = new ArrayList<>();
 
-        for (int i = 0; i < n; ++i) {
+        for (BigInteger i = ZERO; MathHelper.isLess(i, n); i = i.add(ONE)) {
             long currentDelay = Math.abs(RANDOM.nextLong()) % MAX_SEQUENCE_DELAY;
-            long newNum = MathHelper.getSequenceSum(resultSequence) + currentDelay;
+            BigInteger newNum = MathHelper.getSequenceSum(resultSequence).add(BigInteger.valueOf(currentDelay));
             resultSequence.add(newNum);
         }
 
         return resultSequence;
     }
 
-    private long generateRandomW(long M) {
-        long leftBorder = 1;
-        long rightBorder = M - 1;
+    private BigInteger generateRandomW(BigInteger M) {
+        BigInteger rightBorder = M.subtract(ONE);
         while (true) {
-            long probablyW = MathHelper.randomLongInRange(leftBorder, rightBorder);
-            if (MathHelper.gcd(probablyW, M) == 1) {
+            BigInteger probablyW = MathHelper.randomLongInRange(ONE, rightBorder);
+            if (probablyW.gcd(M).equals(ONE)) {
                 return probablyW;
             }
         }
     }
 
-    public List<Long> generatePublicKey() {
-        List<Long> publicKey = new ArrayList<>();
+    public List<BigInteger> generatePublicKey() {
+        List<BigInteger> publicKey = new ArrayList<>();
 
-        for (Long position : MIXED_ARRAY) {
+        for (BigInteger position : MIXED_ARRAY) {
             int intPosition = position.intValue();
-            publicKey.add((W * SEQUENCE.get(intPosition)) % M);
+            publicKey.add((W.multiply(SEQUENCE.get(intPosition))).remainder(M));
         }
         return publicKey;
     }
 
-    public List<Long> generatePrivateKey() {
+    public PrivateKey generatePrivateKey() {
 
-        List<Long> privateKey = new ArrayList<>(MIXED_ARRAY);
-        privateKey.add(M);
-        privateKey.add(W);
-        privateKey.addAll(SEQUENCE);
+        PrivateKey key = PrivateKey.builder()
+                .pi(MIXED_ARRAY)
+                .M(M)
+                .W(W)
+                .sequence(SEQUENCE)
+                .build();
 
-        return privateKey;
+        return key;
     }
 }
