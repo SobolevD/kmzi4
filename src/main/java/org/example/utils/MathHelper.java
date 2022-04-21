@@ -10,7 +10,7 @@ public class MathHelper {
     private static final Random RANDOM = new Random();
 
     public static long randomLongInRange(long leftBorder, long rightBorder) {
-        return Math.abs(RANDOM.nextLong(rightBorder-leftBorder)) + leftBorder;
+        return Math.abs(RANDOM.nextLong(rightBorder - leftBorder)) + leftBorder;
     }
 
     public static int randomIntInRange(int leftBorder, int rightBorder) {

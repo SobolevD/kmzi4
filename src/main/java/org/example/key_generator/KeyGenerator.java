@@ -9,9 +9,9 @@ import java.util.Random;
 
 public class KeyGenerator {
 
+
     private static final long MAX_SEQUENCE_DELAY = 20;
     private static final Random RANDOM = new Random();
-
     private final long M;
     private final long W;
     private final List<Long> SEQUENCE;
