@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static java.math.BigInteger.ONE;
-import static java.math.BigInteger.ZERO;
+import static java.math.BigInteger.*;
 
 public class KeyGenerator {
 
@@ -40,7 +39,7 @@ public class KeyGenerator {
     private List<BigInteger> generateRandomSequence(BigInteger n) {
         List<BigInteger> resultSequence = new ArrayList<>();
 
-        for (BigInteger i = ZERO; MathHelper.isLess(i, n); i = i.add(ONE)) {
+        for (BigInteger i = ZERO; MathHelper.isLess(i, n.subtract(ONE)); i = i.add(ONE)) {
             long currentDelay = Math.abs(RANDOM.nextLong()) % MAX_SEQUENCE_DELAY;
             BigInteger newNum = MathHelper.getSequenceSum(resultSequence).add(BigInteger.valueOf(currentDelay));
             resultSequence.add(newNum);

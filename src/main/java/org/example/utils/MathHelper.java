@@ -27,7 +27,7 @@ public class MathHelper {
     public static List<BigInteger> generateSortedSequence(BigInteger n) {
         List<BigInteger> sortedSequence = new ArrayList<>();
 
-        for (BigInteger i = ZERO; MathHelper.isLess(i, n); i = i.add(ONE)) {
+        for (BigInteger i = ZERO; MathHelper.isLess(i, n.subtract(ONE)); i = i.add(ONE)) {
             sortedSequence.add(i);
         }
 
